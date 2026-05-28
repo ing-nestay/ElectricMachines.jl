@@ -1,37 +1,90 @@
 # =============================================================================
-# Modelo Motor DC con excitación separada
-# Estados: x = [i, ω]  (corriente de armadura, velocidad angular)
-# Entradas: V (tensión), TL (torque de carga)
+# Modelos Motor/Generador DC
+# Versión: Excitación Independiente (Separada)
+# =============================================================================
+# Estados:
+#   x[1] = if  → corriente de campo [A]
+#   x[2] = ia  → corriente de armadura [A]
+#   x[3] = ω   → velocidad angular [rad/s]
+#
+# Entradas:
+#   Vf  → tensión de campo [V]
+#   Va  → tensión de armadura [V]
+#   TL  → torque de carga [N·m]  (positivo = carga motora)
 # =============================================================================
 
-struct DCMotorParams
-    R::Float64    # Resistencia de armadura [Ω]
-    L::Float64    # Inductancia de armadura [H]
-    Ke::Float64   # Constante de back-EMF / torque [V·s/rad]
-    J::Float64    # Inercia del rotor [kg·m²]
-    B::Float64    # Fricción viscosa [N·m·s/rad]
+struct DCMotorIndParams
+    Rf::Float64    # Resistencia de campo [Ω]
+    Lf::Float64    # Inductancia de campo [H]
+    Ra::Float64    # Resistencia de armadura [Ω]
+    La::Float64    # Inductancia de armadura [H]
+    Ke::Float64    # Constante de máquina [V·s/A·rad] (flujo por corriente de campo)
+    J::Float64     # Inercia total del rotor [kg·m²]
+    B::Float64     # Fricción viscosa [N·m·s/rad]
 end
 
 """
-    dc_motor_ode!(dx, x, params, t, V, TL)
+    dc_ind_ode!(dx, x, p, t, Vf, Va, TL)
 
-Ecuaciones de estado del motor DC.
-- x[1] = i  (corriente de armadura [A])
-- x[2] = ω  (velocidad angular [rad/s])
+Ecuaciones de estado del motor DC de excitación independiente.
+
+Estados x = [if, ia, ω]:
+- x[1] = if  corriente de campo [A]
+- x[2] = ia  corriente de armadura [A]
+- x[3] = ω   velocidad angular [rad/s]
 """
-function dc_motor_ode!(dx, x, params::DCMotorParams, t, V, TL)
-    i, ω = x[1], x[2]
-    dx[1] = (V - params.R*i - params.Ke*ω) / params.L
-    dx[2] = (params.Ke*i - params.B*ω - TL) / params.J
+function dc_ind_ode!(dx, x, p::DCMotorIndParams, t, Vf, Va, TL)
+    if_curr, ia, ω = x[1], x[2], x[3]
+
+    # Fuerza contra-electromotriz (back-EMF)
+    E = p.Ke * if_curr * ω
+
+    # Torque electromagnético
+    Te = p.Ke * if_curr * ia
+
+    # Ecuaciones diferenciales
+    dx[1] = (Vf - p.Rf * if_curr) / p.Lf          # circuito de campo
+    dx[2] = (Va - p.Ra * ia - E) / p.La            # circuito de armadura
+    dx[3] = (Te - p.B * ω - TL) / p.J              # mecánica
 end
 
 """
-    dc_steady_state(params, V, TL) -> (i_ss, ω_ss)
+    dc_ind_steady_state(p, Vf, Va, TL) -> (if_ss, ia_ss, ω_ss, Te_ss)
 
-Calcula el punto de operación en estado estacionario.
+Punto de operación en estado estacionario (todas las derivadas = 0).
 """
-function dc_steady_state(params::DCMotorParams, V::Float64, TL::Float64)
-    i_ss = (V - params.Ke * (V - params.R*(TL/params.Ke)) / params.R) / params.R
-    ω_ss = (V - params.R*i_ss) / params.Ke
-    return i_ss, ω_ss
+function dc_ind_steady_state(p::DCMotorIndParams, Vf::Float64, Va::Float64, TL::Float64)
+    # Campo: Lf·dif/dt = 0 → if_ss = Vf/Rf
+    if_ss = Vf / p.Rf
+
+    # Sistema armadura + mecánica en SS:
+    # Ra·ia = Va - Ke·if·ω
+    # Ke·if·ia = B·ω + TL
+    # Resolviendo: ω_ss = (Ke·if·Va - Ra·TL) / (Ke²·if² + Ra·B)
+    KΦ = p.Ke * if_ss
+    ω_ss = (KΦ * Va - p.Ra * TL) / (KΦ^2 + p.Ra * p.B)
+    ia_ss = (Va - KΦ * ω_ss) / p.Ra
+    Te_ss = KΦ * ia_ss
+
+    return if_ss, ia_ss, ω_ss, Te_ss
+end
+
+"""
+    dc_ind_torque_speed(p, Vf, Va; TL_range) -> (ω_vec, Te_vec)
+
+Genera la curva par-velocidad para excitación independiente.
+TL_range: rango de torques de carga a evaluar.
+"""
+function dc_ind_torque_speed(p::DCMotorIndParams, Vf::Float64, Va::Float64;
+                              TL_range = range(0.0, 50.0, length=200))
+    ω_vec  = Float64[]
+    Te_vec = Float64[]
+
+    for TL in TL_range
+        _, ia_ss, ω_ss, Te_ss = dc_ind_steady_state(p, Vf, Va, Float64(TL))
+        push!(ω_vec,  ω_ss)
+        push!(Te_vec, Te_ss)
+    end
+
+    return ω_vec, Te_vec
 end

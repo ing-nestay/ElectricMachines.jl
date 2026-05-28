@@ -46,30 +46,39 @@ end
 end
 
 # =============================================================================
-# Tests Motor DC
+# Tests Motor DC — Excitación Independiente
 # =============================================================================
-@testset "Motor DC" begin
+@testset "Motor DC — Excitación Independiente" begin
 
-    params = DCMotorParams(
-        1.0,    # R = 1 Ω
-        0.01,   # L = 10 mH
-        0.1,    # Ke = 0.1 V·s/rad
-        0.01,   # J = 0.01 kg·m²
-        0.001   # B = 0.001 N·m·s/rad
+    p = DCMotorIndParams(
+        150.0,   # Rf [Ω]
+        10.0,    # Lf [H]
+        1.0,     # Ra [Ω]
+        0.01,    # La [H]
+        0.8,     # Ke [V·s/A·rad]
+        0.05,    # J  [kg·m²]
+        0.01     # B  [N·m·s/rad]
     )
 
-    V, TL = 12.0, 0.0
+    Vf, Va, TL = 220.0, 220.0, 5.0
 
-    # Estado estacionario analítico correcto
-    ω_ss = (params.Ke*V - params.R*TL) / (params.Ke^2 + params.R*params.B)
-    i_ss = (V - params.Ke*ω_ss) / params.R
-    x_ss = [i_ss, ω_ss]
-
-    # En SS las derivadas deben ser ≈ 0
-    dx = [0.0, 0.0]
-    dc_motor_ode!(dx, x_ss, params, 0.0, V, TL)
-
+    # Test 1: derivadas ≈ 0 en estado estacionario
+    if_ss, ia_ss, ω_ss, Te_ss = dc_ind_steady_state(p, Vf, Va, TL)
+    dx = zeros(3)
+    dc_ind_ode!(dx, [if_ss, ia_ss, ω_ss], p, 0.0, Vf, Va, TL)
     @test abs(dx[1]) < 1e-8
     @test abs(dx[2]) < 1e-8
+    @test abs(dx[3]) < 1e-8
+
+    # Test 2: balance de potencia eléctrica = mecánica + pérdidas
+    P_elec = Va * ia_ss
+    P_mec  = Te_ss * ω_ss
+    P_Ra   = p.Ra * ia_ss^2
+    @test P_elec ≈ P_mec + P_Ra  atol=1e-6
+
+    # Test 3: curva par-velocidad tiene pendiente negativa
+    ω_vec, Te_vec = dc_ind_torque_speed(p, Vf, Va, TL_range=range(0.0, 20.0, length=50))
+    @test length(ω_vec) == 50
+    @test ω_vec[1] > ω_vec[end]
 
 end
