@@ -88,3 +88,25 @@ function dc_ind_torque_speed(p::DCMotorIndParams, Vf::Float64, Va::Float64;
 
     return ω_vec, Te_vec
 end
+
+"""
+    dc_ind_torque_speed_v2(p, Vf, Va; n_points) -> (ω_vec, Te_vec)
+
+Genera curva par-velocidad barriendo velocidades desde 0 hasta velocidad en vacío.
+Más preciso que barrer torques cuando la curva es casi horizontal.
+"""
+function dc_ind_torque_speed_v2(p::DCMotorIndParams, Vf::Float64, Va::Float64;
+                                 n_points::Int = 300)
+    KΦ   = p.Ke * (Vf / p.Rf)
+    ω_0  = Va / KΦ                        # velocidad en vacío (TL=0, ia→0)
+    ω_vec  = collect(range(0.0, ω_0 * 1.05, length=n_points))
+    Te_vec = Float64[]
+
+    for ω in ω_vec
+        ia = (Va - KΦ * ω) / p.Ra
+        Te = KΦ * ia
+        push!(Te_vec, max(Te, 0.0))        # solo región motora
+    end
+
+    return ω_vec, Te_vec
+end
