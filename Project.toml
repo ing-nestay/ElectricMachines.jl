@@ -1,0 +1,7 @@
+name = "ElectricMachines"
+uuid = "1f640775-df80-45e2-9ac6-c090e318a0ee"
+authors = ["Nicolás Estay Loo"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10"
