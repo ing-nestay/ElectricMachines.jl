@@ -263,3 +263,35 @@ function induction_steady_state_v2(p::InductionMotorParams,
     s_ss = (p.ωs - best_ω) / p.ωs
     return ψs_ss, ψr_ss, is_ss, ir_ss, best_ω, Te_ss, s_ss
 end
+
+# =============================================================================
+# Constructor desde parámetros del circuito equivalente (ensayos)
+# Notación estándar: Rs, Rr', Xs, Xr', Xm (todos en Ω a frecuencia nominal)
+# Referencia: Chapman cap. 6, Krause cap. 2
+# =============================================================================
+"""
+    induction_motor_params_from_equivalent_circuit(; Rs, Rr, Xs, Xr, Xm, J, p, fn)
+
+Construye InductionMotorParams desde parámetros del circuito equivalente.
+- Rs, Rr : resistencias estator y rotor [Ω]
+- Xs, Xr : reactancias de dispersión estator y rotor [Ω]
+- Xm     : reactancia de magnetización [Ω]
+- J      : inercia [kg·m²]
+- p      : pares de polos
+- fn     : frecuencia nominal [Hz]
+"""
+function induction_motor_params_from_equivalent_circuit(;
+    Rs::Float64, Rr::Float64,
+    Xs::Float64, Xr::Float64, Xm::Float64,
+    J::Float64,  p::Int, fn::Float64)
+
+    ωs  = 2π * fn
+    Lls = Xs / ωs    # inductancia dispersión estator
+    Llr = Xr / ωs    # inductancia dispersión rotor
+    Lm  = Xm / ωs    # inductancia de magnetización
+    Ls  = Lls + Lm   # inductancia propia estator
+    Lr  = Llr + Lm   # inductancia propia rotor
+    Lsr = Lm         # inductancia mutua
+
+    return InductionMotorParams(Rs, Rr, Ls, Lr, Lsr, J, p, ωs)
+end
