@@ -8,6 +8,7 @@ include("transforms/dq0.jl")
 include("transforms/alpha_beta.jl")
 
 # Modelos de máquinas
+include("models/inductances.jl")   # inductancias propias y mutuas desde primeros principios
 include("models/dc_motor.jl")
 include("models/induction.jl")
 include("models/synchronous.jl")

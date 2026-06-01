@@ -1,13 +1,6 @@
 # =============================================================================
 # Modelo Dinámico Máquina de Inducción (MAS)
-#
-# Formulación basada en primeros principios:
-#   - Enlace de flujo por aplicación de la ley de Faraday (ec. 1.4.1)
-#   - Inductancias desde el modelo de campo unidimensional en el entrehierro (§1.3)
-#   - Fasor espacial de corriente de estator: is = (2/3)(ia + a·ib + a²·ic) (ec. 1.6.4)
-#   - Ecuaciones de equilibrio en coordenadas sincrónicas via transformación de Park (§1.7)
-#   - Torque electromagnético via fuerzas de Lorentz sobre la capa de corriente (§1.8)
-#
+# Marco teórico: Mora Castro, A. — UTFSM, 2022
 # Coordenadas: Sistema de Coordenadas Sincrónico (SCS)
 # Variables de estado complejas (fasores espaciales)
 #
