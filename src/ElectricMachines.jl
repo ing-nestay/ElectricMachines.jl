@@ -6,6 +6,7 @@ using StaticArrays
 # Transformadas de referencia
 include("transforms/dq0.jl")
 include("transforms/alpha_beta.jl")
+include("transforms/spatial_phasor.jl")
 
 # Modelos de máquinas
 include("models/inductances.jl")   # inductancias propias y mutuas desde primeros principios
