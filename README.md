@@ -3,9 +3,13 @@
 [![Build Status](https://github.com/ing-nestay/ElectricMachines.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/ing-nestay/ElectricMachines.jl/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Julia](https://img.shields.io/badge/Julia-1.10+-purple.svg)](https://julialang.org)
+[![Estado](https://img.shields.io/badge/estado-en%20desarrollo-orange.svg)]()
 
 > Librería Julia para modelado y simulación de máquinas eléctricas de campo giratorio.  
 > Formulación desde primeros principios físicos: Ampere, Faraday, Lorentz y transformación de Park.
+
+> ⚠️ **Librería en desarrollo activo.** La API puede cambiar sin previo aviso.  
+> No se recomienda para uso en producción.
 
 ---
 
@@ -219,6 +223,18 @@ examples/
 test/
 └── runtests.jl                  # tests unitarios
 ```
+
+---
+
+## Aviso legal
+
+Esta librería implementa formulaciones matemáticas estándar de la teoría de
+máquinas eléctricas. Las ecuaciones utilizadas son de dominio científico común
+y se derivan desde primeros principios físicos (leyes de Ampere, Faraday y Lorentz).
+
+Las referencias bibliográficas se citan únicamente como fuentes de consulta;
+no se reproduce texto, figuras ni tablas de ninguna obra protegida por derechos
+de autor. La implementación en código Julia es una obra original del autor.
 
 ---
 
