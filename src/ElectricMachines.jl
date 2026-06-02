@@ -12,6 +12,7 @@ include("transforms/space_phasor.jl")
 include("models/inductances.jl")          # §1.3 inductancias propias y mutuas
 include("models/park_equations.jl")       # §1.7 ecuaciones de Park
 include("models/electromagnetic_torque.jl") # §1.8 momento electromagnético
+include("models/isotropic_machine.jl")     # §1.9 máquina isotrópica simétrica
 include("models/dc_motor.jl")
 include("models/induction.jl")
 include("models/synchronous.jl")
