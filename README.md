@@ -137,7 +137,7 @@ $$\frac{d\omega}{dt} = \frac{p}{J}\left(T_e - T_m\right)$$
 
 El torque electromagnético por fuerzas de Lorentz (§1.8):
 
-$$T_e = -\frac{3}{2} p \, \text{Im}\left\{\psi_s \cdot \bar{i}_s\right\}$$
+$$T_e = -\frac{3}{2} p \, \text{Im}\left\(\psi_s \cdot \bar{i}_s\right\)$$
 
 ### Inductancias propias y mutuas (§1.3)
 
@@ -250,7 +250,7 @@ El desarrollo analítico de la librería se basa en las siguientes fuentes:
 
 4. **A. M. Tropper** — *Matrix Theory for Electrical Engineering Students*, Queen Mary College, University of London, 1962.
 
-5. **Apuntes de Conversión Electromecánica de Energía**, Capítulo 4.
+5. **Jörg Müller**- *Apuntes de Conversión Electromecánica de Energía*, Capítulo 4.
 
 ---
 
