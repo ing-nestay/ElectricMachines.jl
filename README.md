@@ -222,6 +222,22 @@ test/
 
 ---
 
+## Referencias
+
+El desarrollo analítico de la librería se basa en las siguientes fuentes:
+
+1. **J. Holtz** — *The Representation of AC Machine Dynamics by Complex Signal Flow Graphs*, IEEE Transactions on Industrial Electronics, Vol. 42.
+
+2. **K. P. Kovacs** — *Transient Performance of Electrical Machines*, Elsevier, 1984.
+
+3. **W. V. Lyon** — *Transient Analysis of Alternating Current Machinery*, J. Wiley, 1954.
+
+4. **A. M. Tropper** — *Matrix Theory for Electrical Engineering Students*, Queen Mary College, University of London, 1962.
+
+5. **Apuntes de Conversión Electromecánica de Energía**, Capítulo 4.
+
+---
+
 ## Licencia
 
 MIT © [ing-nestay](https://github.com/ing-nestay)
