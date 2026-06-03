@@ -145,7 +145,7 @@ Las inductancias dependen del ángulo eléctrico $\gamma$ del rotor:
 
 $$L_{aa}(\gamma) = L_1 + L_2 \cos(2\gamma)$$
 
-$$L_{ab}(\gamma) = -\frac{L_1}{2} + L_2 \cos\!\left(2\gamma - \frac{2\pi}{3}\right)$$
+$$L_{ab}(\gamma) = -\frac{L_1}{2} + L_2 \cos\left(2\gamma - \frac{2\pi}{3}\right)$$
 
 Para rotor isotrópico ($L_2 = 0$): $L_{aa} = L_{bb} = L_{cc} = L_s$ (constante).
 
